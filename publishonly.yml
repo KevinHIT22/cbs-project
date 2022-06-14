@@ -3,8 +3,8 @@
 # # This is intended for periodic scheduled publishing rather than CV/CCV general maintenance.
 # # This is intended for use with an Ansible Automation Platform Workflow
 
- - name: Publish the configured Content Views and Composite Content Views
-   hosts: all
-     roles:
-       - cvpublisher
+- name: Publish the configured Content Views and Composite Content Views
+  hosts: all
+  roles:
+    - cvpublisher
 ...           
