@@ -5,7 +5,6 @@
 
  - name: Publish the configured Content Views and Composite Content Views
    hosts: all
-     connection: local
-       roles:
-         - cvpublisher
+     roles:
+       - cvpublisher
 ...           
