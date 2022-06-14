@@ -1,0 +1,9 @@
+---
+- include_vars: login_encrypt.yml
+sat_server_url: "https://cbs-satellite-master.it22.cloud"
+sat_organization: "IT22"
+sat_location: "EUW Azure"
+sat_publisher_username: "{{ vault_sat_publisher_username }}"
+sat_publisher_password: "{{ vault_sat_publisher_password }}"
+sat_validate_certs: true
+...
