@@ -38,5 +38,8 @@
           lifecycle_environments: "CBS-Production"
         loop: "{{ version_info['stdout']| default([], true) }}"
         when: (item['environments']['name'] = 'Pre-production')
+      - name: debug value
+        debug:
+          msg: "{{item['environments']['name']}}"
 #    loop: "{{ cv_list | default([], true) }}"
 ...
