@@ -1,5 +1,5 @@
 ---
-- include_vars: vault.yml
+include_vars: vault.yml
 sat_server_url: "https://cbs-satellite-master.it22.cloud"
 sat_organization: "IT22"
 sat_location: "EUW Azure"
