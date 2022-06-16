@@ -1,5 +1,5 @@
 ---
-- include_vars: sat_server.yml
+include_vars: sat_server.yml
 description: "Published by ansible-tower on {{ ansible_date_time.date }}"
 filter_enddate: "{{ ansible_date_time.date }}"
 num_cvs_to_keep: 3
