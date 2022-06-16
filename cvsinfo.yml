@@ -11,4 +11,8 @@
         server_url: "https://cbs-satellite-master.it22.cloud"
         content_view: "CBS-content-views"
         validate_certs: no
+      register: info
+    - name: print_info
+      debug:
+        msg: "{{info}}"
 ...
