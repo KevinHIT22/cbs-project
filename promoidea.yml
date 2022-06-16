@@ -40,6 +40,6 @@
         when: (item['environments']['name'] = 'Pre-production')
       - name: debug value
         debug:
-          msg: "{{version_info['environments']['name']}}"
+          msg: "{{version_info['content_view_versions']['environments']['name']}}"
 #    loop: "{{ cv_list | default([], true) }}"
 ...
