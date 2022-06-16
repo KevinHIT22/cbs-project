@@ -1,0 +1,13 @@
+---
+- name: CVS version info
+  hosts: localhost
+  connection: local
+  tasks:
+    - name: "Show all content view_versions for a content view"
+      redhat.satellite.content_view_version_info:
+        username: "admin"
+        password: "i22"
+        organization: "IT22"
+        server_url: "https://cbs-aap-vm.it22.cloud"
+        content_view: "cbs-content-views"
+...
