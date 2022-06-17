@@ -1,0 +1,43 @@
+---
+- name: Content CBS promotion
+  hosts: localhost
+  connection: local
+  tasks:
+#  - name: Gather list of content views
+#    redhat.satellite.content_view_info:
+#      username: "{{ sat_publisher_username }}"
+#      password: "{{ sat_publisher_password }}"
+#      organization: "{{ sat_organization }}"
+#      server_url: "{{ sat_server_url }}"
+#    register: cv_list
+
+  - name: Promotion block
+    block:
+      - name: Show all content view_versions for a content view
+        redhat.satellite.content_view_version_info:
+          username: "{{ sat_publisher_username }}"
+          password: "{{ sat_publisher_password }}"
+          organization: "{{ sat_organization }}"
+          server_url: "{{ sat_server_url }}"
+          content_view: "CBS-content-views"
+          validate_certs: no
+        register: version_info
+
+      - name: Promote the configured content views
+        redhat.satellite.content_view_version:
+          username: "{{ sat_publisher_username }}"
+          password: "{{ sat_publisher_password }}"
+          server_url: "{{ sat_server_url }}"
+          organization: "{{ sat_organization }}"
+          validate_certs: "{{ sat_validate_certs }}"
+          content_view: "{{ item.name }}"
+          description: "{{ description }}"
+          current_lifecycle_environment: "Pre-production"
+          lifecycle_environments: "CBS-Production"
+        loop: "{{ composite_content_views | default([], true) }}"
+        #when: (item['environments']['name'] = 'Pre-production')
+      #- name: debug value
+       # debug:
+        #  msg: "{{version_info['content_view_versions']['environments']['name']}}"
+#    loop: "{{ cv_list | default([], true) }}"
+...
