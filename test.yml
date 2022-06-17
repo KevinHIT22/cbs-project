@@ -10,10 +10,16 @@
         organization: "{{ sat_organization }}"
         server_url: "{{ sat_server_url }}"
         content_view: "CBS-content-views"
-        validate_certs: no
-        search: 'name = "CBS-Production"'
+        validate_certs: "{{ sat_validate_certs }}"
       register: version_info
+
+    - name: Flatten list
+      set_fact:
+        flat_version_info: "{{version_info['content_view_versions'] | flatten}}"
+    
     - name: debug value
       debug:
-        msg: "{{version_info}}"
+        msg: "{{item.version}}  {{item.environments | map(attribute='name') }}"
+      loop: "{{flat_version_info }}"
+
 ...
