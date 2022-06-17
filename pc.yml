@@ -12,5 +12,5 @@
       organization: "IT22"
       current_lifecycle_environment: "Pre-production"
       lifecycle_environments: "CBS-Production"
-      version: "4.0"
+      #version: "4.0"
 ...
