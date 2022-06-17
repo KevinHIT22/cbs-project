@@ -1,0 +1,16 @@
+---
+- name: Publish a content
+  host: localhost
+  connection: local
+  tasks:
+  - name: "Publish a content view and promote that version to Pre-prod & CBS-Prod, not idempotent"
+    redhat.satellite.content_view_version:
+      username: "admin"
+      password: "it22"
+      server_url: "https://cbs-satellite-master.it22.cloud"
+      content_view: "CBS-content-views"
+      organization: "IT22"
+      lifecycle_environments:
+        - Pre-production
+        - CBS-Production
+...
