@@ -13,4 +13,5 @@
       #current_lifecycle_environment: "Pre-production"
       lifecycle_environments: "Pre-production"
       version: "3.0"
+      force_promote: yes
 ...
