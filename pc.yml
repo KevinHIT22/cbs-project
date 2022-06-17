@@ -1,6 +1,6 @@
 ---
 - name: Publish a content
-  host: localhost
+  hosts: localhost
   connection: local
   tasks:
   - name: "Publish a content view and promote that version to Pre-prod & CBS-Prod, not idempotent"
@@ -10,7 +10,7 @@
       server_url: "https://cbs-satellite-master.it22.cloud"
       content_view: "CBS-content-views"
       organization: "IT22"
-      lifecycle_environments:
-        - Pre-production
-        - CBS-Production
+      current_lifecycle_environment: Pre-production
+      lifecycle_environments: CBS-Production
+      version: "4.0"
 ...
