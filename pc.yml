@@ -3,15 +3,53 @@
   hosts: localhost
   connection: local
   tasks:
-  - name: "Publish a content view and promote that version to Pre-prod & CBS-Prod, not idempotent"
-    redhat.satellite.content_view_version:
-      username: "admin"
-      password: "it22"
-      server_url: "https://cbs-satellite-master.it22.cloud"
+  #- name: "Publish a content view and promote that version to Pre-prod & CBS-Prod, not idempotent"
+  #  redhat.satellite.content_view_version:
+  #    username: "admin"
+  #    password: "it22"
+  #    server_url: "https://cbs-satellite-master.it22.cloud"
+  #    content_view: "CBS-content-views"
+  #    organization: "IT22"
+  #    #current_lifecycle_environment: "Pre-production"
+  #    lifecycle_environments: "Pre-production"
+  #    version: "1.0"
+  #    #force_promote: yes
+
+  - name: Show all content view_versions for a content view
+    redhat.satellite.content_view_version_info:
+      username: "{{ sat_publisher_username }}"
+      password: "{{ sat_publisher_password }}"
+      organization: "{{ sat_organization }}"
+      server_url: "{{ sat_server_url }}"
       content_view: "CBS-content-views"
-      organization: "IT22"
-      #current_lifecycle_environment: "Pre-production"
-      lifecycle_environments: "Pre-production"
-      version: "3.0"
-      force_promote: yes
+      validate_certs: "{{ sat_validate_certs }}"
+    register: version_info
+
+
+  - name: Flatten list
+    set_fact:
+      flat_version_info: "{{version_info['content_view_versions'] | flatten}}"
+  
+  - name: modfiy variables
+    set_fact:
+      current_env: "{{item['environments'] | map(attribute='name')}}"
+
+  - name: Promote the new content view version
+    redhat.satellite.content_view_version:
+      username: "{{ sat_publisher_username }}"
+      password: "{{ sat_publisher_password }}"
+      server_url: "{{ sat_server_url }}"
+      organization: "{{ sat_organization }}"
+      validate_certs: "{{ sat_validate_certs }}"
+      content_view: "{{ item.content_view | map(attribute='name') }}"
+      description: "{{ description }}"
+      current_lifecycle_environment: "{{current_env}}" #pre-production
+      lifecycle_environments: "CBS-Production"
+      version: "{{item.version}}"
+    loop: "{{ flat_version_info | default([], true) }}" # make new source of content_views var in groups/all/
+    when: ('Pre-production' in "current_env" )
+
+  - name: Debug 
+    debug:
+      msg: "{{current_env}}"
 ...
