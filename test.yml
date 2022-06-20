@@ -1,0 +1,41 @@
+---
+- name: Test date comparison
+  hosts: localhost
+  connection: local
+  tasks:
+    - name: get contentview information
+      redhat.satellite.content_view_info:
+        username: admin
+        password: it22
+        server_url: https://cbs-satellite-master.it22.cloud/
+        validate_certs: no
+        name: "CBS-content-views"
+      register: cvs_list
+
+    - name: get highest ID number
+      set_fact:
+        latest_id: "{{ cvs_list['content_view']['versions'] | map(attribute='id') | max }}"
+
+    - name: Get version associated with ID number
+      set_fact:
+        latest_version: " {{ cvs_list['content_view']['versions'] | selectattr('id', 'equalto', latest_id|int) | map(attribute='version') | replace('[','') | replace(']','') | replace(\"'\",'') }}"
+
+    - name: Check latest version value
+      debug:
+        msg: "{{ latest_version }}"
+
+    - name: Show all content view_versions for a content view
+      redhat.satellite.content_view_version_info:
+        username: "{{ sat_publisher_username }}"
+        password: "{{ sat_publisher_password }}"
+        organization: "{{ sat_organization }}"
+        server_url: "{{ sat_server_url }}"
+        content_view: "CBS-content-views"         
+        validate_certs: "{{ sat_validate_certs }}"
+        search: "version = {{ latest_version }}"
+      register: cvs_latest
+
+    - name:
+      debug: 
+        msg: "{{ cvs_latest }}"
+...           
