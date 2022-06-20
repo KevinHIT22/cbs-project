@@ -12,6 +12,10 @@
         name: "CBS-content-views"
       register: cvs_list
 
+    - name:
+      debug:
+        msg: "{{ cvs_list }}"
+
     - name: get highest ID number
       set_fact:
         latest_id: "{{ cvs_list['content_view']['versions'] | map(attribute='id') | max }}"
