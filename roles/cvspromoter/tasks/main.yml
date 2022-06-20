@@ -43,6 +43,6 @@
     validate_certs: "{{ sat_validate_certs }}"
     content_view: "CBS-content-views"    #Currently hardcoded, change to dynamic
     description: "{{ description }}"
-    lifecycle_environments: "CBS-Production"
+    lifecycle_environments: "Pre-production"
     version: "{{latest_version | trim}}"
 ...
