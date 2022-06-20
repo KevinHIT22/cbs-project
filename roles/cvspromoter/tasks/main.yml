@@ -41,7 +41,7 @@
     server_url: "{{ sat_server_url }}"
     organization: "{{ sat_organization }}"
     validate_certs: "{{ sat_validate_certs }}"
-    content_view: "{{ CBS-content-views}}"    #Currently hardcoded, change to dynamic
+    content_view: "CBS-content-views"    #Currently hardcoded, change to dynamic
     description: "{{ description }}"
     lifecycle_environments: "CBS-Production"
     version: "{{latest_version}}"
