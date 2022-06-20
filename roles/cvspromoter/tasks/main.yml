@@ -1,4 +1,4 @@
---
+---
 - name: Show all content view_versions for a content view
   redhat.satellite.content_view_version_info:
     username: "{{ sat_publisher_username }}"
