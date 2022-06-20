@@ -44,5 +44,5 @@
     content_view: "CBS-content-views"    #Currently hardcoded, change to dynamic
     description: "{{ description }}"
     lifecycle_environments: "CBS-Production"
-    version: "{{latest_version}}"
+    version: "{{latest_version | trim}}"
 ...

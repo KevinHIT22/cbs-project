@@ -26,20 +26,5 @@
 
     - name: Check latest version value
       debug:
-        msg: "{{ latest_version }}"
-
-    - name: Show all content view_versions for a content view
-      redhat.satellite.content_view_version_info:
-        username: "{{ sat_publisher_username }}"
-        password: "{{ sat_publisher_password }}"
-        organization: "{{ sat_organization }}"
-        server_url: "{{ sat_server_url }}"
-        content_view: "CBS-content-views"         
-        validate_certs: "{{ sat_validate_certs }}"
-        search: "version = {{ latest_version }}"
-      register: cvs_latest
-
-    - name:
-      debug: 
-        msg: "{{ cvs_latest }}"
+        msg: "{{ latest_version | trim}} testing for a space"
 ...           
