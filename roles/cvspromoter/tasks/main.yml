@@ -1,0 +1,17 @@
+---
+- name: Show all content view_versions for a content view
+  redhat.satellite.content_view_version_info:
+    username: "{{ sat_publisher_username }}"
+    password: "{{ sat_publisher_password }}"
+    organization: "{{ sat_organization }}"
+    server_url: "{{ sat_server_url }}"
+    content_view: "CBS-content-views"         #Currently hardcoded, change to dynamic
+    validate_certs: "{{ sat_validate_certs }}"
+  register: version_info
+- name: Flatten list
+  set_fact:
+    flat_version_info: "{{version_info['content_view_versions'] | flatten}}"
+- name: Set variable and promote content
+  include_tasks: supplemental_pc.yml
+  loop: "{{ flat_version_info | default([], true) }}"
+...
