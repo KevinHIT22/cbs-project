@@ -1,39 +1,25 @@
----
-- name: Show all content view_versions for a content view
-  redhat.satellite.content_view_version_info:
-    username: "{{ sat_publisher_username }}"
-    password: "{{ sat_publisher_password }}"
-    organization: "{{ sat_organization }}"
-    server_url: "{{ sat_server_url }}"
-    content_view: "CBS-content-views"         #Currently hardcoded, change to dynamic
-    validate_certs: "{{ sat_validate_certs }}"
-  register: version_info
-
-- name: get contentview information
+--- 
+# Gather information about the content view. This information will be formatted and used in later modules
+- name: Get contentview information
   redhat.satellite.content_view_info:
     username: "{{ sat_publisher_username }}"
     password: "{{ sat_publisher_password }}"
     server_url: "{{ sat_server_url }}"
     validate_certs: "{{ sat_validate_certs }}"
-    name: "CBS-content-views"
+    name: "{{ cv_name }}"
   register: cvs_list
 
-- name: Flatten list for promoting cv from pre to prod
+# Registers the ID of the pre-production envrionment as a fact. Used in the next task to get the correct version number.
+- name: Set id of Pre-production environment variable
   set_fact:
-    flat_version_info: "{{version_info['content_view_versions'] | flatten}}"
-
-- name: Set variable and promote content
-  include_tasks: supplemental_pc.yml
-  loop: "{{ flat_version_info | default([], true) }}"
-
-- name: get highest ID number
+    pre_prod_id: "{{ cvs_list['content_view']['environments'] | selectattr('name', 'equalto', test_env) | map(attribute='id') }}"
+ 
+# Uses the previous fact to register the version number of the CV version that is currently in pre-production 
+- name: Set cvs version that is currently in pre-production variable
   set_fact:
-    latest_id: "{{ cvs_list['content_view']['versions'] | map(attribute='id') | max }}"
-          
-- name: Get version associated with ID number
-  set_fact:
-    latest_version: " {{ cvs_list['content_view']['versions'] | selectattr('id', 'equalto', latest_id|int) | map(attribute='version') | replace('[','') | replace(']','') | replace(\"'\",'') }}"
+    pre_prod_version: "{{ cvs_list['content_view']['versions'] | selectattr('environment_ids', 'equalto', pre_prod_id) | map(attribute='version') | replace('[','') | replace(']','') | replace(\"'\",'') }}"
 
+# Promotes the CV that is currently in pre-production to production using the facts set in the previous two tasks
 - name: Promote the new content view version
   redhat.satellite.content_view_version:
     username: "{{ sat_publisher_username }}"
@@ -41,8 +27,31 @@
     server_url: "{{ sat_server_url }}"
     organization: "{{ sat_organization }}"
     validate_certs: "{{ sat_validate_certs }}"
-    content_view: "CBS-content-views"    #Currently hardcoded, change to dynamic
+    content_view: "{{ cv_name }}"
     description: "{{ description }}"
-    lifecycle_environments: "Pre-production"
-    version: "{{latest_version | trim}}"
+    lifecycle_environments: "{{ prod_ env }}"
+    version: "{{ pre_prod_version | trim}}"
+
+ # Sorts the content views based on ID number and registers the highest and thus most recent ID number as fact. Used in the next task to get the correct version number. 
+- name: Get highest version ID number
+  set_fact:                
+    latest_id: "{{ cvs_list['content_view']['versions'] | map(attribute='id') | max }}"
+
+# Uses the previous fact to register the version number of the most recent CV
+- name: Get version number associated with ID number
+  set_fact:                
+    latest_version: " {{ cvs_list['content_view']['versions'] | selectattr('id', 'equalto', latest_id|int) | map(attribute='version') | replace('[','') | replace(']','') | replace(\"'\",'') }}"
+# Promotes the latest CV to pre-production using the facts set in the previous two tasks 
+
+- name: Promote the latest version of the CV to pre-production
+  redhat.satellite.content_view_version:
+    username: "{{ sat_publisher_username }}"
+    password: "{{ sat_publisher_password }}"
+    server_url: "{{ sat_server_url }}"
+    organization: "{{ sat_organization }}"
+    validate_certs: "{{ sat_validate_certs }}"
+    content_view: "{{ cv_name }}"
+    description: "{{ description }}"
+    lifecycle_environments: "{{ test_env }}"
+    version: "{{ latest_version | trim }}"
 ...

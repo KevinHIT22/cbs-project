@@ -3,28 +3,36 @@
   hosts: localhost
   connection: local
   tasks:
-  - name: Update the Errata-by-date filter for content views
-    redhat.satellite.content_view_filter:
+  - name: get contentview information
+    redhat.satellite.content_view_info:
       username: "{{ sat_publisher_username }}"
       password: "{{ sat_publisher_password }}"
       server_url: "{{ sat_server_url }}"
-      name: "ErrataByDate"
-      organization: "{{ sat_organization }}"
       validate_certs: "{{ sat_validate_certs }}"
-      content_view: "CBS-content-views"
-      description: "{{ description }}"
-      filter_type: "erratum" # required for date filter
-      date_type: "updated" # default
-      end_date: "{{ filter_enddate }}"
-      inclusion: True
+      name: "{{cv_name}}"
+    register: cvs_list
 
-  - name: Publish the new content view version
-    redhat.satellite.content_view_version:
-      username: "{{ sat_publisher_username }}"
-      password: "{{ sat_publisher_password }}"
-      server_url: "{{ sat_server_url }}"
-      content_view: "CBS-content-views"
-      organization: "{{ sat_organization }}"
-      validate_certs: "{{ sat_validate_certs }}"
-      description: "{{ description }}"
+  - name: Set id of Pre-production environment variable
+    set_fact:
+      pre_prod_id: "{{cvs_list['content_view']['environments'] | selectattr('name', 'equalto', test_env) | map(attribute='id') }}"
+
+  - name: Set cvs version that is currently in pre-production variable
+    set_fact:
+      pre_prod_version: "{{ cvs_list['content_view']['versions'] | selectattr('environment_ids', 'equalto', pre_prod_id) | map(attribute='version') | replace('[','') | replace(']','') | replace(\"'\",'') }}"
+  
+  - name: print value
+    debug:
+      msg: "{{ pre_prod_version }}"
+#   Do not uncomment the section below until syncing with AAP to run it there
+# - name: Promote the new content view version
+#   redhat.satellite.content_view_version:
+#     username: "{{ sat_publisher_username }}"
+#     password: "{{ sat_publisher_password }}"
+#     server_url: "{{ sat_server_url }}"
+#     organization: "{{ sat_organization }}"
+#     validate_certs: "{{ sat_validate_certs }}"
+#     content_view: "{{ cv_name }}"  
+#     description: "{{ description }}"
+#     lifecycle_environments: "CBS-Production"                
+#     version: "{{pre_prod_version | trim}}"
 ...           
