@@ -13,6 +13,7 @@
     date_type: "updated" # default
     end_date: "{{ filter_enddate }}"
     inclusion: True
+    original packages: True
 
 - name: Publish the new content view version
   redhat.satellite.content_view_version:
