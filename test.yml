@@ -3,28 +3,28 @@
   hosts: localhost
   connection: local
   tasks:
-    - name: get contentview information
-      redhat.satellite.content_view_info:
-        username: admin
-        password: it22
-        server_url: https://cbs-satellite-master.it22.cloud/
-        validate_certs: no
-        name: "CBS-content-views"
-      register: cvs_list
+  - name: Update the Errata-by-date filter for content views
+    redhat.satellite.content_view_filter:
+      username: "{{ sat_publisher_username }}"
+      password: "{{ sat_publisher_password }}"
+      server_url: "{{ sat_server_url }}"
+      name: "ErrataByDate"
+      organization: "{{ sat_organization }}"
+      validate_certs: "{{ sat_validate_certs }}"
+      content_view: "CBS-content-views"
+      description: "{{ description }}"
+      filter_type: "erratum" # required for date filter
+      date_type: "updated" # default
+      end_date: "{{ filter_enddate }}"
+      inclusion: True
 
-    - name:
-      debug:
-        msg: "{{ cvs_list }}"
-
-    - name: get highest ID number
-      set_fact:
-        latest_id: "{{ cvs_list['content_view']['versions'] | map(attribute='id') | max }}"
-
-    - name: Get version associated with ID number
-      set_fact:
-        latest_version: " {{ cvs_list['content_view']['versions'] | selectattr('id', 'equalto', latest_id|int) | map(attribute='version') | replace('[','') | replace(']','') | replace(\"'\",'') }}"
-
-    - name: Check latest version value
-      debug:
-        msg: "{{ latest_version | trim}} testing for a space"
+  - name: Publish the new content view version
+    redhat.satellite.content_view_version:
+      username: "{{ sat_publisher_username }}"
+      password: "{{ sat_publisher_password }}"
+      server_url: "{{ sat_server_url }}"
+      content_view: "CBS-content-views"
+      organization: "{{ sat_organization }}"
+      validate_certs: "{{ sat_validate_certs }}"
+      description: "{{ description }}"
 ...           
