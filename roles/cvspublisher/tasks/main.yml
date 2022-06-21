@@ -7,7 +7,7 @@
     name: "ErrataByDate"
     organization: "{{ sat_organization }}"
     validate_certs: "{{ sat_validate_certs }}"
-    content_view: "CBS-content-views"
+    content_view: "{{ cv_name }}"
     description: "{{ description }}"
     filter_type: "erratum" # required for date filter
     date_type: "updated" # default
@@ -19,7 +19,7 @@
     username: "{{ sat_publisher_username }}"
     password: "{{ sat_publisher_password }}"
     server_url: "{{ sat_server_url }}"
-    content_view: "CBS-content-views"
+    content_view: "{{ cv_name }}"
     organization: "{{ sat_organization }}"
     validate_certs: "{{ sat_validate_certs }}"
     description: "{{ description }}"
