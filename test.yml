@@ -3,26 +3,26 @@
   hosts: localhost
   connection: local
   tasks:
-  - name: get contentview information
-    redhat.satellite.content_view_info:
-      username: "{{ sat_publisher_username }}"
-      password: "{{ sat_publisher_password }}"
-      server_url: "{{ sat_server_url }}"
-      validate_certs: "{{ sat_validate_certs }}"
-      name: "{{cv_name}}"
-    register: cvs_list
-
-  - name: Set id of Pre-production environment variable
-    set_fact:
-      pre_prod_id: "{{cvs_list['content_view']['environments'] | selectattr('name', 'equalto', test_env) | map(attribute='id') }}"
-
-  - name: Set cvs version that is currently in pre-production variable
-    set_fact:
-      pre_prod_version: "{{ cvs_list['content_view']['versions'] | selectattr('environment_ids', 'equalto', pre_prod_id) | map(attribute='version') | replace('[','') | replace(']','') | replace(\"'\",'') }}"
+#  - name: get contentview information
+#    redhat.satellite.content_view_info:
+#      username: "{{ sat_publisher_username }}"
+#      password: "{{ sat_publisher_password }}"
+#      server_url: "{{ sat_server_url }}"
+#      validate_certs: "{{ sat_validate_certs }}"
+#      name: "{{cv_name}}"
+#    register: cvs_list
+#
+#  - name: Set id of Pre-production environment variable
+#    set_fact:
+#      pre_prod_id: "{{cvs_list['content_view']['environments'] | selectattr('name', 'equalto', test_env) | map(attribute='id') }}"
+#
+#  - name: Set cvs version that is currently in pre-production variable
+#    set_fact:
+#      pre_prod_version: "{{ cvs_list['content_view']['versions'] | selectattr('environment_ids', 'equalto', pre_prod_id) | map(attribute='version') | replace('[','') | replace(']','') | replace(\"'\",'') }}"
   
   - name: print value
     debug:
-      msg: "{{ pre_prod_version }}"
+      msg: "{{ prod_env }}"
 #   Do not uncomment the section below until syncing with AAP to run it there
 # - name: Promote the new content view version
 #   redhat.satellite.content_view_version:

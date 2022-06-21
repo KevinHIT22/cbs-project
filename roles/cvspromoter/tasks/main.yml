@@ -29,7 +29,7 @@
     validate_certs: "{{ sat_validate_certs }}"
     content_view: "{{ cv_name }}"
     description: "{{ description }}"
-    lifecycle_environments: "{{ prod_ env }}"
+    lifecycle_environments: "{{ prod_env }}"
     version: "{{ pre_prod_version | trim}}"
 
  # Sorts the content views based on ID number and registers the highest and thus most recent ID number as fact. Used in the next task to get the correct version number. 
