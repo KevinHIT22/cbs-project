@@ -1,0 +1,42 @@
+# This play removes the unused contentviews for the Satellite
+# # This is intended for periodic scheduled publishing rather than CV/CCV general maintenance.
+# # This is intended for use with an Ansible Automation Platform Workflow
+
+- name: Remove content views that are not in use
+  hosts: localhost
+  connection: local
+#  roles:
+#    - cvcleanup
+  tasks:
+    # Gather information about the content view. This information will be formatted and used in later modules
+    - name: Get contentview information
+      redhat.satellite.content_view_info:
+        username: "{{ sat_publisher_username }}"
+        password: "{{ sat_publisher_password }}"
+        server_url: "{{ sat_server_url }}"
+        validate_certs: "{{ sat_validate_certs }}"
+        name: "{{ cv_name }}"
+      register: cvs_list
+
+# Registers the ID of the pre-production envrionment as a fact. Used in the next task to get the correct version number.
+    - name: Set id of Pre-production environment variable
+      set_fact:
+        pre_prod_id: "{{ cvs_list['content_view']['environments'] | selectattr('name', 'equalto', test_env) | map(attribute='id') }}"
+ 
+# Uses the previous fact to register the version number of the CV version that is currently in pre-production 
+    - name: Set cvs version that is currently in pre-production variable
+      set_fact:
+        pre_prod_version: "{{ cvs_list['content_view']['versions'] | selectattr('environment_ids', 'equalto', pre_prod_id) | map(attribute='version') | replace('[','') | replace(']','') | replace(\"'\",'') }}"
+
+ # Sorts the content views based on ID number and registers the highest and thus most recent ID number as fact. Used in the next task to get the correct version number. 
+    - name: Get highest version ID number
+      set_fact:                
+        latest_id: "{{ cvs_list['content_view']['versions'] | map(attribute='id') | max }}"
+
+# Uses the previous fact to register the version number of the most recent CV
+    - name: Get version number associated with ID number
+      set_fact:                
+        latest_version: " {{ cvs_list['content_view']['versions'] | selectattr('id', 'equalto', latest_id|int) | map(attribute='version') | replace('[','') | replace(']','') | replace(\"'\",'') }}"
+    - name: print pre_prod_version
+      debug:
+        msg: "{{ pre_prod_version }}"

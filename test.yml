@@ -1,38 +1,67 @@
----
-- name: Test date comparison
+- name: Remove content views that are not in use
   hosts: localhost
   connection: local
+  vars:
+    version_list: []
   tasks:
-#  - name: get contentview information
-#    redhat.satellite.content_view_info:
-#      username: "{{ sat_publisher_username }}"
-#      password: "{{ sat_publisher_password }}"
-#      server_url: "{{ sat_server_url }}"
-#      validate_certs: "{{ sat_validate_certs }}"
-#      name: "{{cv_name}}"
-#    register: cvs_list
-#
-#  - name: Set id of Pre-production environment variable
-#    set_fact:
-#      pre_prod_id: "{{cvs_list['content_view']['environments'] | selectattr('name', 'equalto', test_env) | map(attribute='id') }}"
-#
-#  - name: Set cvs version that is currently in pre-production variable
-#    set_fact:
-#      pre_prod_version: "{{ cvs_list['content_view']['versions'] | selectattr('environment_ids', 'equalto', pre_prod_id) | map(attribute='version') | replace('[','') | replace(']','') | replace(\"'\",'') }}"
-  
-  - name: print value
+# Get infotmation
+  - name: Get contentview information
+    redhat.satellite.content_view_info:
+      username: "{{ sat_publisher_username }}"
+      password: "{{ sat_publisher_password }}"
+      server_url: "{{ sat_server_url }}"
+      validate_certs: "{{ sat_validate_certs }}"
+      name: "{{ cv_name }}"
+    register: cvs_list
+
+  - name: make version list
+    set_fact:
+      version_list: "{{version_list}} + ['{{ item['version'] }}']"
+    with_items: "{{ cvs_list['content_view']['versions'] }}"
+
+# Registers the ID of the pre-production envrionment as a fact. Used in the next task to get the correct version number.
+  - name: Set id of Pre-production environment variable
+    set_fact:
+      pre_prod_id: "{{ cvs_list['content_view']['environments'] | selectattr('name', 'equalto', test_env) | map(attribute='id') | replace('[','') | replace(']','')}}"
+
+# Uses the previous fact to register the version number of the CV version that is currently in pre-production
+  - name: Set cvs version that is currently in pre-production variable
+    set_fact:
+      pre_prod_version: " {{ item['version'] }}"
+    loop: "{{ cvs_list['content_view']['versions'] }}"
+    when: pre_prod_id|int in item['environment_ids']
+
+
+
+
+
+
+
+# Sorts the content views based on ID number and registers the highest and thus most recent ID number as fact. Used in the next task to get the correct version number.
+  - name: Get highest version ID number
+    set_fact:
+      latest_id: "{{ cvs_list['content_view']['versions'] | map(attribute='id') | max }}"
+
+# Uses the previous fact to register the version number of the most recent CV
+  - name: Get version number associated with ID number
+    set_fact:
+      latest_version: " {{ cvs_list['content_view']['versions'] | selectattr('id', 'equalto', latest_id|int) | map(attribute='version') | replace('[','') | replace(']','') | replace(\"'\",'') }}"
+ 
+  - name: show pre_prod_version
     debug:
-      msg: "{{ prod_env }}"
-#   Do not uncomment the section below until syncing with AAP to run it there
-# - name: Promote the new content view version
-#   redhat.satellite.content_view_version:
-#     username: "{{ sat_publisher_username }}"
-#     password: "{{ sat_publisher_password }}"
-#     server_url: "{{ sat_server_url }}"
-#     organization: "{{ sat_organization }}"
-#     validate_certs: "{{ sat_validate_certs }}"
-#     content_view: "{{ cv_name }}"  
-#     description: "{{ description }}"
-#     lifecycle_environments: "CBS-Production"                
-#     version: "{{pre_prod_version | trim}}"
-...           
+      msg: "{{ pre_prod_version | trim}}"
+  - name: show pre_prod_id
+    debug:
+      msg: "{{ pre_prod_id }}"
+#  - name: show test_env var
+#    debug: 
+#      msg: "{{ cvs_list['content_view']['environments'] | selectattr('name', 'equalto', test_env) }}" 
+#
+#  - name: Test conditional filter
+#    debug:
+#      msg: "{{ item }}"
+#    loop: "{{ version_list }}"
+#    when:
+#      - (item != pre_prod_version)
+#      - (item != latest_version)
+...

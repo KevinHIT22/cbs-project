@@ -12,12 +12,14 @@
 # Registers the ID of the pre-production envrionment as a fact. Used in the next task to get the correct version number.
 - name: Set id of Pre-production environment variable
   set_fact:
-    pre_prod_id: "{{ cvs_list['content_view']['environments'] | selectattr('name', 'equalto', test_env) | map(attribute='id') }}"
- 
-# Uses the previous fact to register the version number of the CV version that is currently in pre-production 
+    pre_prod_id: "{{ cvs_list['content_view']['environments'] | selectattr('name', 'equalto', test_env) | map(attribute='id') | replace('[','') | replace(']','')}}"
+
+# Uses the previous fact to register the version number of the CV version that is currently in pre-production
 - name: Set cvs version that is currently in pre-production variable
   set_fact:
-    pre_prod_version: "{{ cvs_list['content_view']['versions'] | selectattr('environment_ids', 'equalto', pre_prod_id) | map(attribute='version') | replace('[','') | replace(']','') | replace(\"'\",'') }}"
+    pre_prod_version: " {{ item['version'] }}"
+    loop: "{{ cvs_list['content_view']['versions'] }}"
+    when: pre_prod_id|int in item['environment_ids']
 
 # Promotes the CV that is currently in pre-production to production using the facts set in the previous two tasks
 - name: Promote the new content view version
