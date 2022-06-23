@@ -49,7 +49,7 @@
 #Compares the version numbers in the list and registers the highest version number
 - name: Get the version number associated with the highest ID number
   set_fact:
-    latest_version: "{{ item['id'] }}"
+    latest_version: "{{ item['version'] }}"
   loop: "{{ cvs_list['content_view']['versions'] }}"
   when: version_list|int ==  item['id']
 
