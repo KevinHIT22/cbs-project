@@ -1,0 +1,9 @@
+---
+# This play uses the cvcleanup role to remove unused CV versions
+
+- name: Promote CVs to the next environment
+  hosts: localhost
+  connection: local
+  roles:
+    - cvcleanup
+...           

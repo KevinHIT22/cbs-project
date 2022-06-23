@@ -1,0 +1,9 @@
+---
+# This play uses the cvpromoter role to promote CV versions to a new environment
+
+- name: Promote CVs to the next environment
+  hosts: localhost
+  connection: local
+  roles:
+    - cvpromoter
+...           

@@ -15,4 +15,5 @@ num_cvs_to_keep: 3
 test_env: "Pre-production"
 prod_env: "CBS-Production"
 cv_name: "CBS-content-views"
+errata_filter_name: "ErrataByDate"
 ...

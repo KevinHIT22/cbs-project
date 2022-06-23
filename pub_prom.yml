@@ -1,0 +1,10 @@
+---
+# This play uses the cvpublisher and the cvpromoter role to publish new CV versions and promote CV versions to the next environment
+
+- name: Publish and promote the configured Content Views
+  hosts: localhost
+  connection: local
+  roles:
+    - cvpublisher
+    - cvpromoter
+...           

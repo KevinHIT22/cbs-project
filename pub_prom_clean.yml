@@ -1,0 +1,12 @@
+---
+# This play uses the cvpublisher, the cvpromoter and the cvcleanup role to publish a new version of the CV,
+# promote the CV versions to the next environment and to remove unused versions of the CV
+
+- name: Publish and promote the configured Content Views
+  hosts: localhost
+  connection: local
+  roles:
+    - cvpublisher
+    - cvpromoter
+    - cvcleanup
+...           

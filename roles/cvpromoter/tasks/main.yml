@@ -23,10 +23,6 @@
   loop: "{{ cvs_list['content_view']['versions'] }}"
   when: pre_prod_id|int in item['environment_ids']
 
-- name: Check pre_prod_version
-  debug:
-    msg: "{{ pre_prod_version }}"
-
 # Promotes the CV that is currently in pre-production to production using the facts set in the previous two tasks
 - name: Promote the CV from pre-production to production
   redhat.satellite.content_view_version:
@@ -40,11 +36,13 @@
     lifecycle_environments: "{{ prod_env }}"
     version: "{{ pre_prod_version }}"
 
+# Gathers a list of CV version numbers
 - name: Get list of version numbers
   set_fact:
     version_list: "{{ version_list }} + ['{{ item['version'] }}']"
   loop: "{{ cvs_list['content_view']['versions'] }}"
-    
+
+#Compares the version numbers in the list and registers the highest version number
 - name: Get the highest version number
   set_fact:
     latest_version: "{{ version_list | max }}"

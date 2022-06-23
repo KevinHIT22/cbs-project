@@ -1,2 +1,6 @@
 ---
 # vars file for cvcleanup
+version_list: []
+cvv_remove_list: []
+...
+
