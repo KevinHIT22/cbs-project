@@ -1,18 +1,18 @@
 ---
-- name: Update the Errata-by-date filter for content views
-  redhat.satellite.content_view_filter:
-    username: "{{ sat_publisher_username }}"
-    password: "{{ sat_publisher_password }}"
-    server_url: "{{ sat_server_url }}"
-    name: "{{ errata_filter_name }}"
-    organization: "{{ sat_organization }}"
-    validate_certs: "{{ sat_validate_certs }}"
-    content_view: "{{ cv_name }}"
-    description: "{{ description }}"
-    filter_type: "erratum" # required for date filter
-    date_type: "updated" # default
-    end_date: "{{ filter_enddate }}"
-    inclusion: True
+#- name: Update the Errata-by-date filter for content views
+#  redhat.satellite.content_view_filter:
+#    username: "{{ sat_publisher_username }}"
+#    password: "{{ sat_publisher_password }}"
+#    server_url: "{{ sat_server_url }}"
+#    name: "{{ errata_filter_name }}"
+#    organization: "{{ sat_organization }}"
+#    validate_certs: "{{ sat_validate_certs }}"
+#    content_view: "{{ cv_name }}"
+#    description: "{{ description }}"
+#    filter_type: "erratum" # required for date filter
+#    date_type: "updated" # default
+#    end_date: "{{ filter_enddate }}"
+#    inclusion: True
 
 - name: Publish the new content view version
   redhat.satellite.content_view_version:
