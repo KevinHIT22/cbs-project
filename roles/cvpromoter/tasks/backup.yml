@@ -1,0 +1,67 @@
+---
+- name: Promote CVs to the next environment
+  hosts: localhost
+  connection: local
+  tasks:
+# Gather information about the content view. This information will be formatted and used in later modules
+    - name: Get CV information
+      redhat.satellite.content_view_info:
+        username: "{{ sat_publisher_username }}"
+        password: "{{ sat_publisher_password }}"
+        server_url: "{{ sat_server_url }}"
+        validate_certs: "{{ sat_validate_certs }}"
+        name: "{{ cv_name }}"
+      register: cvs_list
+
+    - name:
+      debug:
+        msg: "{{ cvs_list }}"
+
+# Registers the ID of the pre-production envrionment as a fact. Used in the next task to get the correct version number.
+#    - name: Set id of Pre-production environment variable
+#      set_fact:
+#        pre_prod_id: "{{ cvs_list['content_view']['environments'] | selectattr('name', 'equalto', test_env) | map(attribute='id') | replace('[','') | replace(']','')}}"
+
+# Uses the previous fact to register the version number of the CV version that is currently in pre-production
+#- name: Set CV version that is currently in pre-production variable
+#  set_fact:
+#    pre_prod_version: " {{ item['version'] }}"
+#  loop: "{{ cvs_list['content_view']['versions'] }}"
+#  when: pre_prod_id|int in item['environment_ids']
+
+# Promotes the CV that is currently in pre-production to production using the facts set in the previous two tasks
+#- name: Promote the CV from pre-production to production
+#  redhat.satellite.content_view_version:
+#    username: "{{ sat_publisher_username }}"
+#    password: "{{ sat_publisher_password }}"
+#    server_url: "{{ sat_server_url }}"
+#    organization: "{{ sat_organization }}"
+#    validate_certs: "{{ sat_validate_certs }}"
+#    content_view: "{{ cv_name }}"
+#    description: "{{ description }}"
+#    lifecycle_environments: "{{ prod_env }}"
+#    version: "{{ pre_prod_version | trim}}"
+
+# Sorts the content views based on ID number and registers the highest and thus most recent ID number as fact. Used in the next task to get the correct version number. 
+#- name: Get highest version ID number
+#  set_fact:                
+#    latest_id: "{{ cvs_list['content_view']['versions'] | map(attribute='id') | max }}"
+
+# Uses the previous fact to register the version number of the most recent CV
+#- name: Get CV version associated with ID number
+#  set_fact:                
+#    latest_version: "{{ cvs_list['content_view']['versions'] | selectattr('id', 'equalto', latest_id|int) | map(attribute='version') | replace('[','') | replace(']','') | replace(\"'\",'') }}"
+
+# Promotes the latest CV to pre-production using the facts set in the previous two tasks 
+#- name: Promote the latest version of the CV to pre-production
+#  redhat.satellite.content_view_version:
+#    username: "{{ sat_publisher_username }}"
+#    password: "{{ sat_publisher_password }}"
+#    server_url: "{{ sat_server_url }}"
+#    organization: "{{ sat_organization }}"
+#    validate_certs: "{{ sat_validate_certs }}"
+#    content_view: "{{ cv_name }}"
+#    description: "{{ description }}"
+#    lifecycle_environments: "{{ test_env }}"
+#    version: "{{ latest_version | trim }}"
+...

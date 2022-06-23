@@ -7,6 +7,6 @@
   hosts: localhost
   connection: local
   roles:
-    - cvspublisher
-    - cvspromoter
+    - cvpublisher
+    - cvpromoter
 ...           
