@@ -37,15 +37,21 @@
     version: "{{ pre_prod_version }}"
 
 # Gathers a list of CV version numbers
-- name: Get list of version numbers
+- name: Get list of version ID numbers
   set_fact:
-    version_list: "{{ version_list }} + ['{{ item['version'] }}']"
+    version_list: "{{ version_list }} + ['{{ item['id'] }}']"
   loop: "{{ cvs_list['content_view']['versions'] }}"
 
-#Compares the version numbers in the list and registers the highest version number
-- name: Get the highest version number
+- name: Get highest value in ID list
   set_fact:
-    latest_version: "{{ version_list | max }}"
+    version_list: "{{ version_list | max }}"
+
+#Compares the version numbers in the list and registers the highest version number
+- name: Get the version number associated with the highest ID number
+  debug:
+    msg: "{{ item['id'] }}"
+  loop: "{{ cvs_list['content_view']['versions'] }}"
+  when: version_list|int ==  item['id']
 
 # Promotes the latest CV to pre-production 
 - name: Promote the latest version of the CV to pre-production
