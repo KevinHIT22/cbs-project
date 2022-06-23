@@ -14,7 +14,7 @@
 # Compose a list of CV versions that are not used in an environment
 - name: Compose version list
   set_fact:
-    cvv_remove_list: "{{ version_list }} + ['{{ item['version'] }}']"
+    cvv_remove_list: "{{ cvv_remove_list }} + ['{{ item['version'] }}']"
   loop: "{{ cvs_list['content_view']['versions'] }}"
   when: item['environment_ids'] == []
 
