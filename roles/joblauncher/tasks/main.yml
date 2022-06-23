@@ -1,0 +1,11 @@
+---
+# tasks file for joblauncher
+- name: Launch jobs on Satellite
+  redhat.satellite.job_invocation:
+    username: "{{ sat_publisher_username }}"
+    password: "{{ sat_publisher_password }}"
+    server_url: "{{ sat_server_url }}"
+    validate_certs: "{{ sat_validate_certs }}"
+    job_template: "{{ job_template }}"
+    search_query: "{{ search_query }}"
+...

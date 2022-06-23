@@ -1,0 +1,9 @@
+---
+# This play uses the joblauncher role to launch jobs on Satellite
+
+- name: Launches jobs on Satellite
+  hosts: localhost
+  connection: local
+  roles:
+    - joblauncher
+...     

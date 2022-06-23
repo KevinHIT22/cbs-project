@@ -8,7 +8,7 @@ sat_publisher_username: "{{ vault_sat_publisher_username }}"
 sat_publisher_password: "{{ vault_sat_publisher_password }}"
 sat_validate_certs: false
 
-# Update parameters
+# CV vars
 description: "Published by ansible-tower on {{ ansible_date_time.date }}"
 filter_enddate: "{{ ansible_date_time.date }}"
 num_cvs_to_keep: 3
@@ -16,4 +16,8 @@ test_env: "Pre-production"
 prod_env: "CBS-Production"
 cv_name: "CBS-content-views"
 errata_filter_name: "ErrataByDate"
+
+# Job vars
+job_template: "Run-Updates"
+search_query: "hostgroup = RHEL_8"
 ...
