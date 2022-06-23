@@ -11,48 +11,12 @@
     name: "{{ cv_name }}"
   register: cvs_list
 
-# Use complete information on CV to make a list of all version numbers
+# Compose a list of CV versions that are not used in an environment
 - name: Compose version list
   set_fact:
-    version_list: "{{ version_list }} + ['{{ item['version'] }}']"
+    cvv_remove_list: "{{ version_list }} + ['{{ item['version'] }}']"
   loop: "{{ cvs_list['content_view']['versions'] }}"
-
-# Registers the ID of the pre-production envrionment as a fact. Used in the next task to get the correct version number.
-- name: Set id of Pre-production environment variable
-  set_fact:
-    pre_prod_id: "{{ item['id'] }}"
-  loop: "{{ cvs_list['content_view']['environments'] }}"
-  when: test_env in item['name']
-
-# Uses the previous fact to register the version number of the CV version that is currently in pre-production
-- name: Set CV version that is currently in pre-production variable
-  set_fact:
-    pre_prod_version: "{{ item['version'] }}"
-  loop: "{{ cvs_list['content_view']['versions'] }}"
-  when: pre_prod_id|int in item['environment_ids']
-
-# Registers the ID of the production envrionment as a fact. Used in the next task to get the correct version number.
-- name: Set id of Pre-production environment variable
-  set_fact:
-    prod_id: "{{ item['id'] }}"
-  loop: "{{ cvs_list['content_view']['environments'] }}"
-  when: prod_env in item['name']
-  
- # Uses the previous fact to register the version number of the CV version that is currently in production
-- name: Set CV version that is currently in pre-production variable
-  set_fact:
-    prod_version: "{{ item['version'] }}"
-  loop: "{{ cvs_list['content_view']['versions'] }}"
-  when: prod_id|int in item['environment_ids']
-
-# Creates a list of CV version to remove by taking the full version list and removing the versions that are in production and pre-production
-- name: Compose list of CV versions to remove
-  set_fact:
-    cvv_remove_list: "{{ cvv_remove_list }} + ['{{ item }}']"
-  loop: "{{ version_list }}"
-  when: 
-    - prod_version != item
-    - pre_prod_version != item
+  when: item['environment_ids'] == []
 
 # Removes all the CV version that are on the list of CV versions to remove
 - name: Remove CV versions
