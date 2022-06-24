@@ -1,0 +1,13 @@
+---
+# This play uses the joblauncher role to launch weekly jobs on Satellite
+
+- name: Launches jobs on Satellite
+  hosts: localhost
+  connection: local
+  pre_tasks:
+    - name: Set the list of weekly jobs as the job list
+      set_fact: 
+        job_list: "{{ jobs_weekly }}"
+  roles:
+    - joblauncher
+...     

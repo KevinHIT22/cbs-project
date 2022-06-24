@@ -20,4 +20,14 @@ errata_filter_name: "ErrataByDate"
 # Job vars
 job_template: "Run-Updates"
 search_query: "hostgroup = RHEL_8"
+jobs_weekly:
+  - job1
+  - job2
+  - job3
+  - job4
+jobs_monthly:
+  - job5
+  - job6
+  - job7
+  - job8
 ...

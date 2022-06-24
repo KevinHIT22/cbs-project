@@ -6,6 +6,7 @@
     password: "{{ sat_publisher_password }}"
     server_url: "{{ sat_server_url }}"
     validate_certs: "{{ sat_validate_certs }}"
-    job_template: "{{ job_template }}"
+    job_template: "{{ item }}"
     search_query: "{{ search_query }}"
+  loop: "{{ job_list }}"
 ...
